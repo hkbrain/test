@@ -33,10 +33,7 @@
   </target>
   <target name="_package">
     <mkdir dir="${package.output.dir}"/>
-    <exec
-      command="${pear.exec} channel-discover ${pear.channel}"
-      dir="${project.basedir}" passthru="true"
-    />
+    
     <exec
       command="${genphar.exec} ${genphar.args}"
       dir="${project.basedir}"
@@ -108,15 +105,8 @@
   	  command="${defaultpear.exec} install pear"
   	  passthru="true"
   	/>
-  	<exec
-      command="${pear.exec} install --alldeps pear.phpunit.de/PHPUnit"
-      passthru="true"
-    />
+  	
     
-    <exec
-      command="${pear.exec} install --alldeps pear.phing.info/phing"
-      passthru="true"
-    />
   </target>
 
   <target name="clean-dependencies">
