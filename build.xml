@@ -179,7 +179,7 @@
             command="${pear.exec} install --alldeps PHP_CodeSniffer"
             passthru="true"
         />
-      
+        
         <exec
             command="${pear.exec} install --alldeps pear.pdepend.org/PHP_Depend-beta"
             passthru="true"
@@ -188,7 +188,10 @@
             command="${pear.exec} install --alldeps pear.phpmd.org/PHP_PMD"
             passthru="true"
         />
-        
+        <exec
+            command="${pear.exec} install --alldeps phpcpd"
+            passthru="true"
+        />
     
     
     </target>
@@ -200,5 +203,5 @@
     <target name="all" depends="clean, prepare, report"/>
     <target name="build" depends="prepare, test"/>
     <target name="test" depends="prepare"/>
-    <target name="report" depends="build, phploc, phpdepend, phpcs, phpmd, phpcpd"/>
+    <target name="report" depends="build, phpdepend, phpcs, phpmd"/>
 </project>
