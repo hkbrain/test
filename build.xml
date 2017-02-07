@@ -105,7 +105,11 @@
   	  command="${defaultpear.exec} install pear"
   	  passthru="true"
   	/>
-  	
+  	<exec
+      command="${pear.exec} install --alldeps phpunit/PHPUnit"
+      passthru="true"
+    />
+    
     
   </target>
 
