@@ -105,8 +105,9 @@
   	  command="${defaultpear.exec} install pear"
   	  passthru="true"
   	/>
+        
   	<exec
-      command="${pear.exec} install --alldeps phpunit/PHPUnit"
+      command="${pear.exec}  install PHPUnit"
       passthru="true"
     />
     
