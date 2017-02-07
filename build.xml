@@ -92,11 +92,7 @@
       command="${defaultpear.exec} config-set temp_dir ${dir.vendor}/tmp"
       passthru="true"
     />
-    <exec
-      command="${defaultpear.exec} config-set doc_dir ${dir.vendor}/doc"
-      passthru="true"
-    />
-    <exec
+       <exec
       command="${defaultpear.exec} config-set test_dir ${dir.vendor}/test"
       passthru="true"
     />
@@ -116,30 +112,7 @@
       command="${pear.exec} install --alldeps pear.phpunit.de/PHPUnit"
       passthru="true"
     />
-    <exec
-      command="${pear.exec} install --alldeps phpunit/phploc"
-      passthru="true"
-    />
-    <exec
-      command="${pear.exec} install --alldeps pear.docblox-project.org/DocBlox"
-      passthru="true"
-    />
-    <exec
-      command="${pear.exec} install --alldeps pear.pdepend.org/PHP_Depend-beta"
-      passthru="true"
-    />
-    <exec
-      command="${pear.exec} install --alldeps pear.phpmd.org/PHP_PMD"
-      passthru="true"
-    />
-    <exec
-      command="${pear.exec} install --alldeps pear.phpunit.de/phpcpd"
-      passthru="true"
-    />
-    <exec
-      command="${pear.exec} install --alldeps PHP_CodeSniffer"
-      passthru="true"
-    />
+    
     <exec
       command="${pear.exec} install --alldeps pear.phing.info/phing"
       passthru="true"
