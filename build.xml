@@ -222,9 +222,16 @@
     <target name="clean-dependencies">
         <delete dir="${dir.vendor}"/>
     </target>
+ <target name="composer" description="Installing dependencies" depends="prepare">
+        <delete dir="${basedir}/vendor"/>
 
+        <exec
+            command="composer install "
+            passthru="true"
+        />
+    </target>
     <target name="all" depends="clean, prepare, report"/>
-    <target name="build" depends="prepare, test"/>
+    <target name="build" depends="prepare, composer, test"/>
     <target name="test" depends="prepare, phpunit"/>
     <target name="report" depends="build, phploc, phpdepend, phpcs, phpmd, phpcpd"/>
 </project>
