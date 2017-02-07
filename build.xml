@@ -80,6 +80,10 @@
     <target name="_phpcs">
         <mkdir dir="${phpcs.output.xml.dir}"/>
         <mkdir dir="${phpcs.output.html.dir}"/>
+        <exec
+            command="${phpcs.exec} --config-set installed_paths vendor/escapestudios/symfony2-coding-standard"
+            passthru="true"
+        />
     
         <exec
             command="${phpcs.exec} ${phpcs.args}"
@@ -117,6 +121,14 @@
 
     <target name="install-dependencies">
         <mkdir dir="${dir.vendor}"/>
+        <exec
+            command="composer require --dev escapestudios/symfony2-coding-standard:~2.0"
+            passthru="true"
+        />
+         <exec
+            command="${pear.exec}  channel-update pear.php.net"
+            passthru="true"
+        />
         <exec
             command="${defaultpear.bin} config-create ${dir.vendor} ${dir.vendor}/.pearrc"
             passthru="true"
