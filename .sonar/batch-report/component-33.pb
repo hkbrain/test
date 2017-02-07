@@ -1,0 +1,1 @@
+!$src/AppBundle/Security/PostVoter.php 2phpX>
