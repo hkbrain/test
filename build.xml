@@ -10,23 +10,6 @@
 	<delete dir="${dir.output}"/>
   </target>
 
-  <target name="phpunit">
-    <exec command="${phing} _phpunit" passthru="true"/>
-  </target>
-  <target name="_phpunit">
-    <mkdir dir="${phpunit.output.xml.dir}"/>
-    <mkdir dir="${phpunit.output.html.dir}"/>
-    <exec
-      command="${phpunit.exec} ${phpunit.args}"
-      dir="${project.basedir}/tests"
-      passthru="true"
-    />
-    <xslt
-      file="${phpunit.output.xml.file}"
-      tofile="${junit.output.xml.file}"
-      style="${junit.style}"
-    />
-  </target>
   <target name="phpcs">
     <exec command="${phing} _phpcs" passthru="true"/>
   </target>
@@ -139,6 +122,6 @@
 
   <target name="all" depends="clean, prepare, package, report"/>
   <target name="build" depends="prepare, test"/>
-  <target name="test" depends="prepare, phpunit"/>
+  <target name="test" depends="prepare"/>
   <target name="report" depends="build, phpcs"/>
 </project>
