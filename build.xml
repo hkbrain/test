@@ -18,7 +18,7 @@
         <mkdir dir="${phpunit.output.html.dir}"/>
         <exec
             command="${phpunit.exec} ${phpunit.args}"
-            dir="${project.basedir}/test"
+            dir="${project.basedir}/tests"
             passthru="true"
         />
         <xslt
