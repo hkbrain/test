@@ -80,11 +80,7 @@
     <target name="_phpcs">
         <mkdir dir="${phpcs.output.xml.dir}"/>
         <mkdir dir="${phpcs.output.html.dir}"/>
-        <exec
-            command="${phpcs.exec} --config-set installed_paths vendor/escapestudios/symfony2-coding-standard"
-            passthru="true"
-        />
-    
+            
         <exec
             command="${phpcs.exec} ${phpcs.args}"
             dir="${project.basedir}"
