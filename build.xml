@@ -225,6 +225,6 @@
 
     <target name="all" depends="clean, prepare, report"/>
     <target name="build" depends="prepare, test"/>
-    <target name="test" depends="prepare"/>
-    <target name="report" depends="build, phpdepend, phpcs, phpmd"/>
+    <target name="test" depends="prepare, phpunit"/>
+    <target name="report" depends="build, phploc, phpdepend, phpcs, phpmd, phpcpd"/>
 </project>
