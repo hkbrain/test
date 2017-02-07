@@ -9,6 +9,24 @@
     <target name="clean">
         <delete dir="${dir.output}"/>
     </target>
+    
+    <target name="phpunit">
+        <exec command="${phing} _phpunit" passthru="true"/>
+    </target>
+    <target name="_phpunit">
+        <mkdir dir="${phpunit.output.xml.dir}"/>
+        <mkdir dir="${phpunit.output.html.dir}"/>
+        <exec
+            command="${phpunit.exec} ${phpunit.args}"
+            dir="${project.basedir}/test"
+            passthru="true"
+        />
+        <xslt
+            file="${phpunit.output.xml.file}"
+            tofile="${junit.output.xml.file}"
+            style="${junit.style}"
+        />
+    </target>
     <target name="phploc">
         <exec command="${phing} _phploc" passthru="true"/>
     </target>
@@ -117,11 +135,8 @@
 
     <target name="install-dependencies">
         <mkdir dir="${dir.vendor}"/>
+        
         <exec
-            command="composer require --dev escapestudios/symfony2-coding-standard:~2.0"
-            passthru="true"
-        />
-         <exec
             command="${pear.exec}  channel-update pear.php.net"
             passthru="true"
         />
