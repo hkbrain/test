@@ -1,154 +1,253 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<project name="Lazyprojet" default="build">
-  <property name="workspace" value="${basedir}" />
-  <property name="sourcedir" value="${basedir}/src" />
-  <property name="builddir" value="${workspace}/app/build" />
-
-  <target name="build"
-  depends="prepare,vendors,parameters,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpdoc,phpunit,phpcb"/>
-
-  <target name="build-parallel" depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
-
-  <target name="tools-parallel" description="Run tools in parallel">
-    <parallel threadCount="2">
-      <sequential>
-        <antcall target="pdepend"/>
-        <antcall target="phpmd-ci"/>
-      </sequential>
-      <antcall target="phpcpd"/>
-      <antcall target="phpcs-ci"/>
-      <antcall target="phploc"/>
-      <antcall target="phpdoc"/>
-    </parallel>
+<project name="App" default="all" basedir=".">
+  <property file="./php.properties"/>
+  <property file="./build.properties"/>
+  <target name="prepare" depends="clean">
+    <mkdir dir="${dir.output}"/>
+    <mkdir dir="${dir.tmp}"/>
   </target>
 
-  <target name="clean" description="Cleanup build artifacts">
-    <delete dir="${builddir}/api"/>
-    <delete dir="${builddir}/code-browser"/>
-    <delete dir="${builddir}/coverage"/>
-    <delete dir="${builddir}/logs"/>
-    <delete dir="${builddir}/pdepend"/>
-    <delete dir="${builddir}/docs/*"/>
+  <target name="clean">
+	<delete dir="${dir.output}"/>
   </target>
 
-  <target name="prepare" depends="clean" description="Prepare for build">
-    <mkdir dir="${builddir}/api"/>
-    <mkdir dir="${builddir}/code-browser"/>
-    <mkdir dir="${builddir}/coverage"/>
-    <mkdir dir="${builddir}/logs"/>
-    <mkdir dir="${builddir}/pdepend"/>
+  <target name="phpdepend">
+    <exec command="${phing} _phpdepend" passthru="true"/>
+  </target>
+  <target name="_phpdepend">
+    <mkdir dir="${phpdepend.output.xml.dir}"/>
+    <mkdir dir="${phpdepend.output.html.dir}"/>
+    <exec
+      command="${phpdepend.exec} ${phpdepend.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+    <xslt
+      file="${phpdepend.output.xml.file}"
+      tofile="${phpdepend.output.html.file}"
+      style="${phpdepend.style}"
+    />
   </target>
 
-  <target name="lint" description="Perform syntax check of sourcecode files">
-    <apply executable="php" failonerror="true">
-    <arg value="-l" />
-    <fileset dir="${sourcedir}">
-      <include name="**/*.php" />
-      <modified />
-    </fileset>
-    <fileset dir="${basedir}/src/">
-      <include name="**/*Test.php" />
-      <modified />
-    </fileset>
-    </apply>
+  <target name="phpcs">
+    <exec command="${phing} _phpcs" passthru="true"/>
+  </target>
+  <target name="_phpcs">
+    <mkdir dir="${phpcs.output.xml.dir}"/>
+    <mkdir dir="${phpcs.output.html.dir}"/>
+    <exec
+      command="${phpcs.exec} ${phpcs.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+    <xslt
+      file="${phpcs.output.xml.file}"
+      tofile="${phpcs.output.html.file}"
+      style="${phpcs.style}"
+    />
   </target>
 
-  <target name="phploc" description="Measure project size using PHPLOC">
-    <exec executable="phploc">
-    <arg value="--log-csv" />
-    <arg value="${builddir}/logs/phploc.csv" />
-    <arg path="${sourcedir}" />
-    </exec>
+  <target name="phpunit">
+    <exec command="${phing} _phpunit" passthru="true"/>
+  </target>
+  <target name="_phpunit">
+    <mkdir dir="${phpunit.output.xml.dir}"/>
+    <mkdir dir="${phpunit.output.html.dir}"/>
+    <exec
+      command="${phpunit.exec} ${phpunit.args}"
+      dir="${project.basedir}/tests"
+      passthru="true"
+    />
+    <xslt
+      file="${phpunit.output.xml.file}"
+      tofile="${junit.output.xml.file}"
+      style="${junit.style}"
+    />
   </target>
 
-  <target name="pdepend" description="Calculate software metrics using PHP_Depend">
-    <exec executable="pdepend">
-      <arg value="--jdepend-xml=${builddir}/logs/jdepend.xml" />
-      <arg value="--jdepend-chart=${builddir}/pdepend/dependencies.svg" />
-      <arg value="--overview-pyramid=${builddir}/pdepend/overview-pyramid.svg" />
-      <arg path="${sourcedir}" />
-    </exec>
+  <target name="phpmd">
+    <exec command="${phing} _phpmd" passthru="true"/>
+  </target>
+  <target name="_phpmd">
+    <mkdir dir="${phpmd.output.xml.dir}"/>
+    <mkdir dir="${phpmd.output.html.dir}"/>
+    <exec
+      command="${phpmd.exec} ${phpmd.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+    <xslt
+      file="${phpmd.output.xml.file}"
+      tofile="${phpmd.output.html.file}"
+      style="${phpmd.style}"
+    />
   </target>
 
-  <target name="phpmd" description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
-    <exec executable="phpmd">
-      <arg path="${basedir}/src" />
-      <arg value="text" />
-      <arg value="${workspace}/app/phpmd.xml" />
-    </exec>
+  <target name="phpcpd">
+    <exec command="${phing} _phpcpd" passthru="true"/>
+  </target>
+  <target name="_phpcpd">
+    <mkdir dir="${phpcpd.output.xml.dir}"/>
+    <mkdir dir="${phpcpd.output.html.dir}"/>
+    <exec
+      command="${phpcpd.exec} ${phpcpd.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+    <xslt
+      file="${phpcpd.output.xml.file}"
+      tofile="${phpcpd.output.html.file}"
+      style="${phpcpd.style}"
+    />
   </target>
 
-  <target name="phpmd-ci" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
-    <exec executable="phpmd">
-      <arg path="${sourcedir}" />
-      <arg value="xml" />
-      <arg value="${workspace}/app/phpmd.xml" />
-      <arg value="--reportfile" />
-      <arg value="${builddir}/logs/pmd.xml" />
-    </exec>
+  <target name="phpdoc">
+    <exec command="${phing} _phpdoc" passthru="true"/>
+  </target>
+  <target name="_phpdoc">
+    <mkdir dir="${phpdoc.output.html.dir}"/>
+    <exec
+      command="${phpdoc.exec} ${phpdoc.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
   </target>
 
-  <target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-    <exec executable="phpcs">
-      <arg value="--standard=Symfony2" />
-      <arg path="${sourcedir}" />
-    </exec>
+  <target name="phploc">
+    <exec command="${phing} _phploc" passthru="true"/>
+  </target>
+  <target name="_phploc">
+    <mkdir dir="${phploc.output.html.dir}"/>
+    <exec
+      command="${phploc.exec} ${phploc.args} > ${phploc.output.html.file}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
   </target>
 
-  <target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-    <exec executable="phpcs" output="/dev/null">
-      <arg value="--report=checkstyle" />
-      <arg value="--report-file=${builddir}/logs/checkstyle.xml" />
-      <arg value="--standard=Symfony2" />
-      <arg path="${sourcedir}" />
-    </exec>
+  <target name="package">
+    <exec command="${phing} _package" passthru="true"/>
+  </target>
+  <target name="_package">
+    <mkdir dir="${package.output.dir}"/>
+    <exec
+      command="${pear.exec} channel-discover ${pear.channel}"
+      dir="${project.basedir}" passthru="true"
+    />
+    <exec
+      command="${genphar.exec} ${genphar.args}"
+      dir="${project.basedir}"
+      passthru="true"
+    />
+    <exec
+      command="${genpear.exec}" dir="${project.basedir}" passthru="true"
+      output="${dir.output}/package.xml"
+    />
+    <copy file="${dir.output}/package.xml" tofile="${dir.src}/package.xml" />
+    <exec
+      command="${pear.exec} package" dir="${dir.src}" passthru="true"
+    />
+    <delete file="${dir.src}/package.xml" />
+    <move file="${dir.src}/${peartgz}" tofile="${dir.output}/${peartgz}" overwrite="true"/>
   </target>
 
-  <target name="phpcpd" description="Find duplicate code using PHPCPD">
-    <exec executable="phpcpd">
-      <arg value="--log-pmd" />
-      <arg value="${builddir}/logs/pmd-cpd.xml" />
-      <arg path="${sourcedir}" />
-    </exec>
+  <target name="install-dependencies">
+  	<mkdir dir="${dir.vendor}"/>
+  	<exec
+  	  command="${defaultpear.bin} config-create ${dir.vendor} ${dir.vendor}/.pearrc"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set php_bin ${php.bin}"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set php_dir ${dir.vendor}/php"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set bin_dir ${dir.vendor}/bin"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set cache_dir ${dir.vendor}/cache"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set cfg_dir ${dir.vendor}/cfg"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set data_dir ${dir.vendor}/data"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set download_dir ${dir.vendor}/download"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set temp_dir ${dir.vendor}/tmp"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set doc_dir ${dir.vendor}/doc"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set test_dir ${dir.vendor}/test"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set www_dir ${dir.vendor}/www"
+      passthru="true"
+    />
+    <exec
+      command="${defaultpear.exec} config-set auto_discover 1"
+      passthru="true"
+    />
+  	<exec
+  	  command="${defaultpear.exec} install pear"
+  	  passthru="true"
+  	/>
+  	<exec
+      command="${pear.exec} install --alldeps pear.phpunit.de/PHPUnit"
+      passthru="true"
+    />
+    <exec
+      command="${pear.exec} install --alldeps phpunit/phploc"
+      passthru="true"
+    />
+    <exec
+      command="${pear.exec} install --alldeps pear.docblox-project.org/DocBlox"
+      passthru="true"
+    />
+    <exec
+      command="${pear.exec} install --alldeps pear.pdepend.org/PHP_Depend-beta"
+      passthru="true"
+    />
+    <exec
+      command="${pear.exec} install --alldeps pear.phpmd.org/PHP_PMD"
+      passthru="true"
+    />
+    <exec
+      command="${pear.exec} install --alldeps pear.phpunit.de/phpcpd"
+      passthru="true"
+    />
+    <exec
+      command="${pear.exec} install --alldeps PHP_CodeSniffer"
+      passthru="true"
+    />
+    <exec
+      command="${pear.exec} install --alldeps pear.phing.info/phing"
+      passthru="true"
+    />
   </target>
 
-  <target name="phpdoc" description="Generate API documentation using phpDox">
-    <exec executable="phpdoc">
-      <arg line="-d '${sourcedir}' -t '${builddir}/docs' --title='Tempo' " />
-    </exec>
+  <target name="clean-dependencies">
+    <delete dir="${dir.vendor}"/>
   </target>
 
-  <target name="phpunit" description="Run unit tests with PHPUnit">
-    <exec executable="phpunit" failonerror="true">
-      <arg value="-c" />
-      <arg path="${basedir}/app/phpunit.xml" />
-    </exec>
-  </target>
-
-  <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
-    <exec executable="phpcb">
-      <arg value="--log" />
-      <arg path="${builddir}/logs" />
-      <arg value="--source" />
-      <arg path="${sourcedir}" />
-      <arg value="--output" />
-      <arg path="${builddir}/code-browser" />
-    </exec>
-  </target>
-
-  <target name="vendors" description="Update vendors">
-    <exec executable="php" failonerror="true">
-        <arg value="composer.phar" />
-        <arg value="update" />
-    </exec>
-  </target>
-
-  <target name="parameters" description="Copy parameters">
-    <exec executable="cp" failonerror="true">
-      <arg path="app/config/parameters.yml.dist" />
-      <arg path="app/config/parameters.yml" />
-    </exec>
-  </target>
-
+  <target name="all" depends="clean, prepare, package, report"/>
+  <target name="build" depends="prepare, test"/>
+  <target name="test" depends="prepare, phpunit"/>
+  <target name="report" depends="build, phploc, phpdoc, phpdepend, phpcs, phpmd, phpcpd"/>
 </project>
